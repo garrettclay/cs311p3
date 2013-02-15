@@ -14,9 +14,22 @@ int **pipe_generator(int pipe_cnt){
 	return pipe_array;
 }
 
-void suppressor(int *array_pipe){
+void suppressor(int **input_pipe){
 
 
+
+}
+
+void solder_pipes_shut(int **open_pipe, int num_pipes){
+	int i;
+	int j;
+	for(i=0; i < num_pipes; i++){
+		for(j=0; j < 2; j++){
+			if(close(open_pipe[i][j]) == -1){
+				//perror("recursive close");
+			}
+		}	
+	}
 
 }
 
@@ -26,14 +39,17 @@ int main(int argc, char **argv){
 	char buf2[50] = "this prints fine.\n";
 	char buf3[50];
 	int result;
-	//int prs_fds[2];
 	int status;
 	int j = 0;
+	int k = 0;
 	pid_t child;
-
+	int num_sort = argc;
+	//delete following line for more than one process
+	num_sort = 1;
 
 	// pass argc in here eventually
 	int **prs_fds = pipe_generator(1);
+	int **spr_fds = pipe_generator(1);
 
 
 //	pipe_array[1][0] = 5;
@@ -42,6 +58,10 @@ int main(int argc, char **argv){
 			perror("pipe");
 			exit(-1);
 		}
+	//	if(pipe(spr_fds[k]) != 0){
+	//		perror("pipe");
+	//		exit(-1);
+	//	}
 	
 		switch((result = fork())){
 			case -1:
@@ -54,10 +74,16 @@ int main(int argc, char **argv){
 				//child case
 				//read from prs_fds
 				//write to sup_fds 
-				if(close(prs_fds[j][1] == -1)){	//write pipe end
+			//	close(STDIN_FILENO);
+			//	close(STDOUT_FILENO);
+				if(close(prs_fds[j][1]) == -1){	//write pipe end
 					perror("close 1");
 				}
-			
+	//			if(close(spr_fds[k][0]) == -1){
+	//				perror("close 7");
+	//			}				
+
+
 				// duplicate stdout
 				if(prs_fds[j][0] != STDIN_FILENO){
 					if(dup2(prs_fds[j][0], STDIN_FILENO) == -1){
@@ -67,25 +93,30 @@ int main(int argc, char **argv){
 						perror("close 2");
 					}	
 				}	
-				FILE *input = fdopen(STDIN_FILENO, "r");
+	/*			if(spr_fds[k][1] != STDOUT_FILENO){
+					if(dup2(spr_fds[k][1], STDOUT_FILENO) ==-1){
+						perror("dup3 1");
+					}
+					if(close(spr_fds[k][1]) == -1){
+						perror("close 6");
+					}
+				}
+	*/
 
-				int o = 0;
+			//	FILE *input = fdopen(STDIN_FILENO, "r");
+
+	/*			int o = 0;
 				while(o < 8){
 					fgets(buf, 12, input);	
 					printf("%s\n",buf);
 					o++;
 				}		
-				//execlp("sort", "sort", (char *)NULL);
-				//int num_read;
-				//num_read = read(STDIN_FILENO, buf2, 100);
-			//	printf("Start of child PID %d\n", getpid());
-			//	fgets(buf3, 50, input);
-			//	printf("\n%s\n", buf3);
-
-				printf("End of child %d\n",getpid());
-				//fgets(buf2, 5, input);
-				fclose(input);	
-				close(STDIN_FILENO);
+	*/			
+	//			close(spr_fds[k][1]);
+	//
+				solder_pipes_shut(prs_fds, 1);
+				//close(prs_fds[j][0]);
+				execlp("sort", "sort", (char *)NULL);
 				break;		
 	
 			default:
@@ -117,9 +148,7 @@ int main(int argc, char **argv){
 				}
 			
 				fclose(output);	
-				close(STDOUT_FILENO);
 				//child = wait(&status);
-				//fputs(buf2, output);
 				break; 
 		}
 		j++;
