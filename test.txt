@@ -1,4 +1,4 @@
-apple 
+apple Ship Zebra 78 
 banana
 orange
 green
@@ -7,3 +7,23 @@ blue
 black
 37
 works
+Ant
+Brains
+Clever
+Never
+ATE
+super duper looper looper
+super
+super
+crazy
+zoo
+whales
+zooper
+zany
+five five five five five
+three
+two
+	one
+two
+9 three
+. three
